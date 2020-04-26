@@ -4,7 +4,7 @@ const backDropOn = document.getElementById('backdrop');
 const startAddMovieButton = document.querySelector('header button');
 const cancelAddMovieButton = addMovieModal.querySelector('.btn--passive');
 const confirmAddMovieButton = cancelAddMovieButton.nextElementSibling;
-const userInputs = addMovieModal.querySelector('input');
+const userInputs = addMovieModal.querySelectorAll('input');
 
 const movies = [];
 
