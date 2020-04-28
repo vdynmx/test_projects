@@ -17,7 +17,20 @@ const updateUI = () => {
     }
 }
 
-const renderNewMovieElement = (title, imageUrl, rating) => { //here I am creating a element for display
+const deleteMovieHandler = (movieId) => {
+    let movieIndex = 0;
+    for (const movie of movies) {
+        if (movie.id === movieId) {
+            break;
+        }
+        movieIndex++;
+    }
+    movies.splice(movieIndex, 1);
+    const listRoot = document.getElementById('movie-list');
+    listRoot.children[movieIndex].remove();
+};
+
+const renderNewMovieElement = (id, title, imageUrl, rating) => { //here I am creating a element for display
     const newMovieElement = document.createElement('li'); // Here we are createing a li 
     newMovieElement.className = 'movie-element'; // this is the classname for css purposes, so the li is then pulling the style for movie-element
     newMovieElement.innerHTML = ` 
@@ -29,6 +42,7 @@ const renderNewMovieElement = (title, imageUrl, rating) => { //here I am creatin
      <p>${rating}/5 star</p>
     </div>
     `; // Creating the content of html with dynamic variables that is going to be parsed in
+    newMovieElement.addEventListener('click', deleteMovieHandler.bind(null, id) );
     const listRoot = document.getElementById('movie-list'); // now we are selecting the movie-list section of the page which is a ul parent to the li
     listRoot.append(newMovieElement); // appending the newMovieElement li object we just created with properties into it.
 };
@@ -70,6 +84,7 @@ const addMovieHandler = () => { // function structure first pulling in data from
     }
 
     const newMovie = { // creating a new object with properties
+        id: Math.random().toString(),
         title: titleValue,
         image: imageUrlValue,
         rating: ratingValue
@@ -78,7 +93,7 @@ const addMovieHandler = () => { // function structure first pulling in data from
     console.log(movies);
     toggleMovieModal();
     clearMovieInput();
-    renderNewMovieElement(newMovie.title, newMovie.image, newMovie.rating); // Creating the Element uptop we now need to parese through the data here in order to render it with data.
+    renderNewMovieElement(newMovie.id, newMovie.title, newMovie.image, newMovie.rating); // Creating the Element uptop we now need to parese through the data here in order to render it with data.
     updateUI();
 };
 
