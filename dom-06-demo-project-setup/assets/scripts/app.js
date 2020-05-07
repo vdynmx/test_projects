@@ -6,6 +6,7 @@ const cancelAddMovieButton = addMovieModal.querySelector('.btn--passive');
 const confirmAddMovieButton = cancelAddMovieButton.nextElementSibling;
 const userInputs = addMovieModal.querySelectorAll('input');
 const entryTextSection = document.getElementById('entry-text');
+const deleteMovieModal = document.getElementById('delete-modal'); //Currently this Css is not showing
 
 const movies = [];
 
@@ -15,7 +16,7 @@ const updateUI = () => {
     } else {
         entryTextSection.style.display = 'none';
     }
-}
+};
 
 const deleteMovieHandler = (movieId) => {
     let movieIndex = 0;
@@ -28,6 +29,31 @@ const deleteMovieHandler = (movieId) => {
     movies.splice(movieIndex, 1);
     const listRoot = document.getElementById('movie-list');
     listRoot.children[movieIndex].remove();
+    closeMovieDeletionModal();
+    updateUI();
+};
+
+const closeMovieDeletionModal = () => {
+    toggleBackdrop();
+    deleteMovieModal.classList.remove('visible');
+};
+
+const startdeleteMovieHandler = (movieId) => {
+    deleteMovieModal.classList.add('visible'); // Here we add the css property of visible to it, which will show the css modal
+    //deleteMovie(movieId);
+    toggleBackdrop();
+    const cancelDeletetionButton = deleteMovieModal.querySelector('.btn--passive');
+    let confirmDeletetionButton = deleteMovieModal.querySelector('.btn--danger');
+    
+    confirmDeletetionButton.replaceWith(confirmDeletetionButton.cloneNode(true)); //copying the delete button below so you can mod it later, this way you dont create hanging processes
+
+    confirmDeletetionButton = deleteMovieModal.querySelector('.btn--danger');
+
+    cancelDeletetionButton.removeEventListener('click', closeMovieDeletionModal);
+
+    cancelDeletetionButton.addEventListener('click', closeMovieDeletionModal);
+    confirmDeletetionButton.addEventListener('click', deleteMovieHandler.bind(null, movieId)); //actually have to delete the movie now so you call the deletemovie function and pass the movieid for deletion
+    
 };
 
 const renderNewMovieElement = (id, title, imageUrl, rating) => { //here I am creating a element for display
@@ -42,7 +68,7 @@ const renderNewMovieElement = (id, title, imageUrl, rating) => { //here I am cre
      <p>${rating}/5 star</p>
     </div>
     `; // Creating the content of html with dynamic variables that is going to be parsed in
-    newMovieElement.addEventListener('click', deleteMovieHandler.bind(null, id) );
+    newMovieElement.addEventListener('click', startdeleteMovieHandler.bind(null, id) );
     const listRoot = document.getElementById('movie-list'); // now we are selecting the movie-list section of the page which is a ul parent to the li
     listRoot.append(newMovieElement); // appending the newMovieElement li object we just created with properties into it.
 };
@@ -51,8 +77,12 @@ const toggleBackdrop = () => {
     backDropOn.classList.toggle('visible');
 };
 
-const toggleMovieModal = () => {
-    addMovieModal.classList.toggle('visible');
+const closeMovieModal = () => {
+    addMovieModal.classList.remove('visible');
+};
+
+const showMovieModal = () => {
+    addMovieModal.classList.add('visible');
     toggleBackdrop();
 };
 
@@ -60,10 +90,11 @@ const clearMovieInput = () => {
     for (const usrInput of userInputs) { // loop that goes through every Input (usrInput) of the object Userinputs
         usrInput.value = ''; // for every single Input we do the following. set value to 
     }
-}
+};
 
 const cancelMovieModal = () => {
-    toggleMovieModal();
+    closeMovieModal();
+    toggleBackdrop();
     clearMovieInput();
 };
 
@@ -91,18 +122,21 @@ const addMovieHandler = () => { // function structure first pulling in data from
     };
     movies.push(newMovie); //accessing a parental array to push a value into it from the objects created in this function
     console.log(movies);
-    toggleMovieModal();
+    closeMovieModal();
+    toggleBackdrop();
     clearMovieInput();
     renderNewMovieElement(newMovie.id, newMovie.title, newMovie.image, newMovie.rating); // Creating the Element uptop we now need to parese through the data here in order to render it with data.
     updateUI();
 };
 
 const backdropClickHandler = () => {
-    toggleMovieModal();
+    closeMovieModal();
+    closeMovieDeletionModal();
+    clearMovieInput();
 };
 
 
-startAddMovieButton.addEventListener('click', toggleMovieModal);
+startAddMovieButton.addEventListener('click', showMovieModal);
 cancelAddMovieButton.addEventListener('click', cancelMovieModal);
 backDropOn.addEventListener('click',backdropClickHandler);
 confirmAddMovieButton.addEventListener('click', addMovieHandler);
