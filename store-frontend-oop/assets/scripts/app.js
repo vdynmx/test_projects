@@ -17,6 +17,12 @@ class ProductItem {
     {
         this.product = product; // this clones the passthroughs objects into the current one, aka cloning
     }
+
+    addToCart() {
+        console.log('adding to cart');
+        console.log(this.product);
+    }
+
     render () {
         const prodEl = document.createElement('li'); //Each element gets a li
                 prodEl.classname = 'product-item';
@@ -31,8 +37,11 @@ class ProductItem {
                     </div>
                     </div>
                 `;//  this used inside refers to the object that has been passed through
+                const addCartButton = prodEl.querySelector('button');
+                addCartButton.addEventListener('click', this.addToCart.bind(this));
                 return prodEl;
             }
+            
 }
 
 class ProductList {
@@ -44,7 +53,6 @@ class ProductList {
     ];
     constructor () {};
     render () {
-        const renderHook = document.getElementById('app'); // now I can use renderHook to work with the div app, insert and change elements within it
             const prodList = document.createElement('ul'); // creating a the list container to insert the data into
             prodList.className = 'product-list'; // telling prodlist to use a particular css id. Setting the value
             //now that the outer elements / containers are established. now we work on the individual items
@@ -53,10 +61,35 @@ class ProductList {
                 const prodEl = productItem.render();
                 prodList.append(prodEl); // appending elements to the list
             } 
-            renderHook.append(prodList); // adding the list here to render into main div
+            return prodList;          
     };
 }
 
+class ShoppingCart {
+    items = [];
+    render () {
+        const cartEl = document.createElement('section');
+        cartEl.innerHTML = `
+        <h2>Total: \$${0}</h2>
+        <button> Order ow!</button>
+        `;
+        cartEl.className = 'cart';
+        return cartEl;
+    }
+}
 
-const productList = new ProductList();
-productList.render();
+class Shop {
+    render () {
+        const renderHook = document.getElementById('app'); // now I can use renderHook to work with the div app, insert and change elements within it
+        const cart = new ShoppingCart();
+        const cartEl = cart.render();
+        const productList = new ProductList();
+        const prodListEl = productList.render();
+
+        renderHook.append(cart);
+        renderHook.append(prodListEl); 
+    }
+}
+
+const shop = new Shop();
+shop.render();
