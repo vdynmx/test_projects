@@ -1,22 +1,32 @@
-class Product {
-    title  = 'DEFAULT'; // assign default values and use equal sign
-    imgURL; // no default value will return undefind
-    description; // called fields in the class template creation, object in objects its called a property
-    price;
-
-    constructor(title, image, desc, price){
-        this.title = title;
-        this.imgUrl = image;
-        this.description = desc;
-        this.price = price;
-    } 
-}
-
+/* const products = [
+    {
+        title: 'Seedoi 100ml',
+        imgUrl: 'https://i.imgur.com/HeYV02C.jpg',
+        price: 7.99,
+        description: 'Start kit'
+    },
+    {
+        title: 'Seedoil 250ml',
+        imgUrl: 'https://i.imgur.com/rqE7Ckq.jpg',
+        price: 12.99,
+        description: 'most popular item'
+    }
+];
+*/ // so I moved the products array with objects in it into another object productList
 const productList = {
     products: [
-        new Product('Seedoi 100ml','https://i.imgur.com/HeYV02C.jpg','Start kit', 7.99),
-        new Product('Seedoil 250ml', 'https://i.imgur.com/rqE7Ckq.jpg', 'most popular item', 12.99)
-    ],
+        {
+            title: 'Seedoi 100ml',
+            imgUrl: 'https://i.imgur.com/HeYV02C.jpg',
+            price: 7.99,
+            description: 'Start kit'
+        },
+        {
+            title: 'Seedoil 250ml',
+            imgUrl: 'https://i.imgur.com/rqE7Ckq.jpg',
+            price: 12.99,
+            description: 'most popular item'
+        }], // the products array moved into the object 
         render() {
             const renderHook = document.getElementById('app'); // now I can use renderHook to work with the div app, insert and change elements within it
             const prodList = document.createElement('ul'); // creating a the list container to insert the data into
