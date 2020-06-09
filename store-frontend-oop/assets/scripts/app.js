@@ -19,8 +19,7 @@ class ProductItem {
     }
 
     addToCart() {
-        console.log('adding to cart');
-        console.log(this.product);
+        App.addProductToCart(this.product);
     }
 
     render () {
@@ -38,8 +37,8 @@ class ProductItem {
                     </div>
                 `;//  this used inside refers to the object that has been passed through
                 const addCartButton = prodEl.querySelector('button');
-                addCartButton.addEventListener('click', this.addToCart.bind(this));
-                return prodEl;
+                addCartButton.addEventListener('click', this.addToCart.bind(this)); // what we are doing is binding the function to this class, otherwise its global as this refers to what calls it 
+                return prodEl; // this returns the object to the DOM that can be used
             }
             
 }
@@ -67,6 +66,12 @@ class ProductList {
 
 class ShoppingCart {
     items = [];
+
+    addProduct(product) {
+        this.items.push(product);
+        this.totalOutput.innerHTML = `<h2>Total: \$${1}</h2>`;
+    }
+
     render () {
         const cartEl = document.createElement('section');
         cartEl.innerHTML = `
@@ -74,22 +79,34 @@ class ShoppingCart {
         <button> Order ow!</button>
         `;
         cartEl.className = 'cart';
-        return cartEl;
+        this.totalOutput = cartEl.querySelector('h2');
+        return cartEl; // we return cartEl because it was created when called render so only on return does it get appended to the DOM
     }
 }
 
 class Shop {
     render () {
         const renderHook = document.getElementById('app'); // now I can use renderHook to work with the div app, insert and change elements within it
-        const cart = new ShoppingCart();
-        const cartEl = cart.render();
+        this.cart = new ShoppingCart();
+        const cartEl = this.cart.render();
         const productList = new ProductList();
         const prodListEl = productList.render();
 
-        renderHook.append(cart);
+        renderHook.append(cartEl);
         renderHook.append(prodListEl); 
     }
 }
+class App {
+    static init() {
+        const shop = new Shop();
+        shop.render(); // run render before this.cart because the 
+        this.cart = shop.cart;
+        
+    }
 
-const shop = new Shop();
-shop.render();
+    static addProductToCart(product) {
+        this.cart.addProduct(product);
+    }
+}
+
+App.init();
