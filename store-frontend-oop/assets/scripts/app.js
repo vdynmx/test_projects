@@ -41,9 +41,10 @@ class Component {
 
     }
 }
-class ProductItem {
-    constructor(product) //instead of passing argument of the product ino the constructor, now passing the whole product object instead of broken apart 
+class ProductItem extends Component {
+    constructor(product, renderHookId) //instead of passing argument of the product ino the constructor, now passing the whole product object instead of broken apart 
     {
+        super(renderHookId);
         this.product = product; // this clones the passthroughs objects into the current one, aka cloning
     }
 
@@ -52,8 +53,7 @@ class ProductItem {
     }
 
     render () {
-        const prodEl = document.createElement('li'); //Each element gets a li
-                prodEl.classname = 'product-item';
+        const prodEl = this.createRootElement('li', 'product-item'); //Each element gets a li, after extend we can use those methods
                 prodEl.innerHTML = `
                     <div>
                     <img src="${this.product.imgUrl}" alt="${this.product.title}"> 
@@ -64,32 +64,35 @@ class ProductItem {
                         <button>Add to cart</button>
                     </div>
                     </div>
-                `;//  this used inside refers to the object that has been passed through
+                `;//  this used inside refers to the object that has been passed through. As this is the logic it remains as this is the specific function to it.
                 const addCartButton = prodEl.querySelector('button');
                 addCartButton.addEventListener('click', this.addToCart.bind(this)); // what we are doing is binding the function to this class, otherwise its global as this refers to what calls it 
-                return prodEl; // this returns the object to the DOM that can be used
+                //return prodEl; after extending no longer need to return as its already hooked into the dom due to base class in Component // this returns the object to the DOM that can be used
             }
             
 }
 
-class ProductList {
+class ProductList extends Component{
     products = [
         new Product('Seedoi 100ml','https://i.imgur.com/HeYV02C.jpg','Start kit', 7.99),
         new Product('Seedoil 250ml',
          'https://i.imgur.com/rqE7Ckq.jpg',
           'most popular item', 12.99)
     ];
-    constructor () {};
+    constructor (renderHookId) {
+        super(renderHookId);
+    }
     render () {
-            const prodList = document.createElement('ul'); // creating a the list container to insert the data into
-            prodList.className = 'product-list'; // telling prodlist to use a particular css id. Setting the value
+            const prodList = this.createRootElement('ul',  'product-list', [new ElementAttribute('id','prod-list')]); // creating a the list container to insert the data into
+            //prodList.id = 'prod-list'; could be removed after extension because id being passed via Component class
+            //prodList.className = 'product-list'; //removed after extension becuase className being passed via extended Component class // telling prodlist to use a particular css id. Setting the value
             //now that the outer elements / containers are established. now we work on the individual items
             for (const prod of this.products) { //this will reference productList.products to rener each element inside
-                const productItem = new ProductItem(prod);
-                const prodEl = productItem.render();
-                prodList.append(prodEl); // appending elements to the list
+                const productItem = new ProductItem(prod, 'prod-list');
+                productItem.render();
+                //prodList.append(prodEl); // appending elements to the list
             } 
-            return prodList;          
+            //return prodList; no longer need to return because class was extended and the DOM connection is in Component class          
     };
 }
 
@@ -134,13 +137,13 @@ class ShoppingCart extends Component {
 
 class Shop {
     render () {
-        const renderHook = document.getElementById('app'); // now I can use renderHook to work with the div app, insert and change elements within it
+        //const renderHook = document.getElementById('app'); // now I can use renderHook to work with the div app, insert and change elements within it
         this.cart = new ShoppingCart('app');
         this.cart.render();
-        const productList = new ProductList();
-        const prodListEl = productList.render();
+        const productList = new ProductList('app');
+        productList.render();
 
-        renderHook.append(prodListEl); 
+        //renderHook.append(prodListEl); // no longer need to append as this is taken care of by base class 
     }
 }
 class App {
