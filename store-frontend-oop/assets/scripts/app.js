@@ -21,9 +21,11 @@ class ElementAttribute { //here we are setting the schema of the attributes pass
 
 
 class Component {
-        constructor(renderHookId) {     // setting the constructor in order to append to the DOM
+        constructor(renderHookId, shouldRender = true) {     // setting the constructor in order to append to the DOM
             this.hookId = renderHookId;
+            if (shouldRender) {
             this.render(); //every class that extends to Component will have a render method that will be defined below
+            }
         }
 
     render() {
@@ -49,8 +51,9 @@ class Component {
 class ProductItem extends Component {
     constructor(product, renderHookId) //instead of passing argument of the product ino the constructor, now passing the whole product object instead of broken apart 
     {
-        super(renderHookId);
+        super(renderHookId, false);
         this.product = product; // this clones the passthroughs objects into the current one, aka cloning
+        this.render();
     }
 
     addToCart() {
@@ -78,26 +81,41 @@ class ProductItem extends Component {
 }
 
 class ProductList extends Component{
-    products = [
+    products = []; // empty array, sample data parsed into consntructor
+    constructor (renderHookId) {
+        super(renderHookId);
+        this.fetchProducts();
+                     
+    }
+
+    fetchProducts(){ //creating this method to call the data
+        this.products = [
         new Product('Seedoi 100ml','https://i.imgur.com/HeYV02C.jpg','Start kit', 7.99),
         new Product('Seedoil 250ml',
          'https://i.imgur.com/rqE7Ckq.jpg',
-          'most popular item', 12.99)
-    ];
-    constructor (renderHookId) {
-        super(renderHookId);
+          'most popular item', 12.99)];
     }
+
+    renderProducts() {
+        for (const prod of this.products) {
+            new ProductItem(prod, 'prod-list');
+        }
+    }
+
     render () {
             const prodList = this.createRootElement('ul',  'product-list', [new ElementAttribute('id','prod-list')]); // creating a the list container to insert the data into
+            if (this.products && this.products.length > 0) {
+                this.renderProducts();
+            }
             //prodList.id = 'prod-list'; could be removed after extension because id being passed via Component class
             //prodList.className = 'product-list'; //removed after extension becuase className being passed via extended Component class // telling prodlist to use a particular css id. Setting the value
             //now that the outer elements / containers are established. now we work on the individual items
-            for (const prod of this.products) { //this will reference productList.products to rener each element inside
+            //for (const prod of this.products) { // moved for loop into standalone renderProducts method //this will reference productList.products to rener each element inside
                 /* const productItem = as we are no longer needing to call methods on Productitem (render) we dont need to store the instance in a variable*/
-                new ProductItem(prod, 'prod-list');
+                //new ProductItem(prod, 'prod-list');
                 //productItem.render(); do not want to manually call render should be part of class
                 //prodList.append(prodEl); // appending elements to the list
-            } 
+            //} 
             //return prodList; no longer need to return because class was extended and the DOM connection is in Component class          
     };
 }
@@ -118,20 +136,21 @@ class ShoppingCart extends Component {
         }, 0);
         return sum;
     }
-
+    
+    constructor(renderHookId) {
+        super(renderHookId);
+    }
+    
     addProduct(product) {
         const updatedItems = [...this.items];
         updatedItems.push(product);
         this.cartItems = updatedItems;
     }
 
-    constructor(renderHookId) {
-        super(renderHookId);
-    }
+    
 
     render () {
         const cartEl = this.createRootElement('section', 'cart'); //storing the created new element in a variable so we can enhance them below
-        
         cartEl.innerHTML = `
         <h2>Total: \$${0}</h2>
         <button> Order ow!</button>
