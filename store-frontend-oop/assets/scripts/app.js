@@ -48,6 +48,55 @@ class Component {
 
     }
 }
+
+class ShoppingCart extends Component {
+    items = [];
+
+    set cartItems(value) {
+        this.items = value;
+        this.totalOutput.innerHTML = `<h2>Total: \$${this.totalAmount.toFixed(2)}</h2>`;
+    }
+
+    get totalAmount() {
+        const sum = this.items.reduce((preVal, curItem) => {
+            return preVal + curItem.price;
+        }, 0);
+        return sum;
+    }
+    
+    constructor(renderHookId) {
+        super(renderHookId, false);
+        this.orderProducts = () => {
+            console.log('Ordering');
+            console.log(this.items);
+        }
+        this.render();
+    }
+    
+    addProduct(product) {
+        const updatedItems = [...this.items];
+        updatedItems.push(product);
+        this.cartItems = updatedItems;
+    }
+
+    /* orderProducts = () => { // this arrow function solves the this problem by referencing the class, because this without an arrow function below would referene the button
+        console.log('Ordering');
+        console.log(this.item);
+    } */ // issue here though is that orderProducts will already have been called, because of super. thus moving this function into the constructor
+
+    render() {
+        const cartEl = this.createRootElement('section', 'cart'); //storing the created new element in a variable so we can enhance them below
+        cartEl.innerHTML = `
+        <h2>Total: \$${0}</h2>
+        <button> Order ow!</button>
+        `;
+        const orderButton = cartEl.querySelector('button');
+        // v1 orderButton.addEventListener('click', () => this.orderProducts()); //arrowfunction will allow the click to call this method instead of global
+        orderButton.addEventListener('click', this.orderProducts); 
+        this.totalOutput = cartEl.querySelector('h2');
+        //return cartEl; now that we are running it through objects we dont need to return anymore // we return cartEl because it was created when called render so only on return does it get appended to the DOM
+    }
+}
 class ProductItem extends Component {
     constructor(product, renderHookId) //instead of passing argument of the product ino the constructor, now passing the whole product object instead of broken apart 
     {
@@ -60,7 +109,7 @@ class ProductItem extends Component {
         App.addProductToCart(this.product);
     }
 
-    render () {
+    render() {
         const prodEl = this.createRootElement('li', 'product-item'); //Each element gets a li, after extend we can use those methods
                 prodEl.innerHTML = `
                     <div>
@@ -94,6 +143,7 @@ class ProductList extends Component{
         new Product('Seedoil 250ml',
          'https://i.imgur.com/rqE7Ckq.jpg',
           'most popular item', 12.99)];
+        this.renderProducts();
     }
 
     renderProducts() {
@@ -102,7 +152,7 @@ class ProductList extends Component{
         }
     }
 
-    render () {
+    render() {
             const prodList = this.createRootElement('ul',  'product-list', [new ElementAttribute('id','prod-list')]); // creating a the list container to insert the data into
             if (this.products && this.products.length > 0) {
                 this.renderProducts();
@@ -122,49 +172,13 @@ class ProductList extends Component{
 
 
 
-class ShoppingCart extends Component {
-    items = [];
 
-    set cartItems(value) {
-        this.items = value;
-        this.totalOutput.innerHTML = `<h2>Total: \$${this.totalAmount.toFixed(2)}</h2>`;
-    }
-
-    get totalAmount() {
-        const sum = this.items.reduce((preVal, curItem) => {
-            return preVal + curItem.price;
-        }, 0);
-        return sum;
-    }
-    
-    constructor(renderHookId) {
-        super(renderHookId);
-    }
-    
-    addProduct(product) {
-        const updatedItems = [...this.items];
-        updatedItems.push(product);
-        this.cartItems = updatedItems;
-    }
-
-    
-
-    render () {
-        const cartEl = this.createRootElement('section', 'cart'); //storing the created new element in a variable so we can enhance them below
-        cartEl.innerHTML = `
-        <h2>Total: \$${0}</h2>
-        <button> Order ow!</button>
-        `;
-        this.totalOutput = cartEl.querySelector('h2');
-        //return cartEl; now that we are running it through objects we dont need to return anymore // we return cartEl because it was created when called render so only on return does it get appended to the DOM
-    }
-}
 
 class Shop extends Component{
     constructor() {
         super();
     }
-    render () {
+    render() {
         //const renderHook = document.getElementById('app'); // now I can use renderHook to work with the div app, insert and change elements within it
         this.cart = new ShoppingCart('app');
         //this.cart.render(); always calling render manually should be part of class when created
