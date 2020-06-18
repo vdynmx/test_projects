@@ -23,7 +23,12 @@ class ElementAttribute { //here we are setting the schema of the attributes pass
 class Component {
         constructor(renderHookId) {     // setting the constructor in order to append to the DOM
             this.hookId = renderHookId;
+            this.render(); //every class that extends to Component will have a render method that will be defined below
         }
+
+    render() {
+
+    }
 
     createRootElement(tag, cssClasses, attributes) {
         const rootElement = document.createElement(tag); //here we create the root element itself and assigning it a tag
@@ -88,8 +93,9 @@ class ProductList extends Component{
             //prodList.className = 'product-list'; //removed after extension becuase className being passed via extended Component class // telling prodlist to use a particular css id. Setting the value
             //now that the outer elements / containers are established. now we work on the individual items
             for (const prod of this.products) { //this will reference productList.products to rener each element inside
-                const productItem = new ProductItem(prod, 'prod-list');
-                productItem.render();
+                /* const productItem = as we are no longer needing to call methods on Productitem (render) we dont need to store the instance in a variable*/
+                new ProductItem(prod, 'prod-list');
+                //productItem.render(); do not want to manually call render should be part of class
                 //prodList.append(prodEl); // appending elements to the list
             } 
             //return prodList; no longer need to return because class was extended and the DOM connection is in Component class          
@@ -135,13 +141,17 @@ class ShoppingCart extends Component {
     }
 }
 
-class Shop {
+class Shop extends Component{
+    constructor() {
+        super();
+    }
     render () {
         //const renderHook = document.getElementById('app'); // now I can use renderHook to work with the div app, insert and change elements within it
         this.cart = new ShoppingCart('app');
-        this.cart.render();
-        const productList = new ProductList('app');
-        productList.render();
+        //this.cart.render(); always calling render manually should be part of class when created
+        /*const productList = now the need to start a instance anywhere no longer needed*/ 
+        new ProductList('app');
+        //productList.render(); called manually shhould be part of class 
 
         //renderHook.append(prodListEl); // no longer need to append as this is taken care of by base class 
     }
@@ -151,7 +161,7 @@ class App {
 
     static init() {
         const shop = new Shop();
-        shop.render(); // run render before this.cart because the 
+        //shop.render(); // run render before this.cart because the 
         this.cart = shop.cart;
         
     }
