@@ -12,6 +12,35 @@ class Product {
     } 
 }
 
+class ElementAttribute { //here we are setting the schema of the attributes passed into the element
+    constructor(attrName, attrValue) {
+        this.name = attrName;
+        this.value = attrValue;
+    }
+}
+
+
+class Component {
+        constructor(renderHookId) {     // setting the constructor in order to append to the DOM
+            this.hookId = renderHookId;
+        }
+
+    createRootElement(tag, cssClasses, attributes) {
+        const rootElement = document.createElement(tag); //here we create the root element itself and assigning it a tag
+        if (cssClasses) { // if the cssClass is passed its truethy and set 
+            rootElement.className = cssClasses; // Css value is there and is set to the rootelement created
+        }
+        if (attributes && attributes.length > 0) { // setting conditions here for arrays, so it has to have a value and the value should be greater then 0 aka truthy
+            for (const attr of attributes) { // loop for each element in the array
+                rootElement.setAttribute(attr.name, attr.value); // now for each element (which we expect to be objects, thus .name and .value) in the array we setting the attribute value passed
+            }
+
+        }
+        document.getElementById(this.hookId).append(rootElement);
+        return rootElement;
+
+    }
+}
 class ProductItem {
     constructor(product) //instead of passing argument of the product ino the constructor, now passing the whole product object instead of broken apart 
     {
@@ -64,39 +93,59 @@ class ProductList {
     };
 }
 
-class ShoppingCart {
+
+
+class ShoppingCart extends Component {
     items = [];
 
+    set cartItems(value) {
+        this.items = value;
+        this.totalOutput.innerHTML = `<h2>Total: \$${this.totalAmount.toFixed(2)}</h2>`;
+    }
+
+    get totalAmount() {
+        const sum = this.items.reduce((preVal, curItem) => {
+            return preVal + curItem.price;
+        }, 0);
+        return sum;
+    }
+
     addProduct(product) {
-        this.items.push(product);
-        this.totalOutput.innerHTML = `<h2>Total: \$${1}</h2>`;
+        const updatedItems = [...this.items];
+        updatedItems.push(product);
+        this.cartItems = updatedItems;
+    }
+
+    constructor(renderHookId) {
+        super(renderHookId);
     }
 
     render () {
-        const cartEl = document.createElement('section');
+        const cartEl = this.createRootElement('section', 'cart'); //storing the created new element in a variable so we can enhance them below
+        
         cartEl.innerHTML = `
         <h2>Total: \$${0}</h2>
         <button> Order ow!</button>
         `;
-        cartEl.className = 'cart';
         this.totalOutput = cartEl.querySelector('h2');
-        return cartEl; // we return cartEl because it was created when called render so only on return does it get appended to the DOM
+        //return cartEl; now that we are running it through objects we dont need to return anymore // we return cartEl because it was created when called render so only on return does it get appended to the DOM
     }
 }
 
 class Shop {
     render () {
         const renderHook = document.getElementById('app'); // now I can use renderHook to work with the div app, insert and change elements within it
-        this.cart = new ShoppingCart();
-        const cartEl = this.cart.render();
+        this.cart = new ShoppingCart('app');
+        this.cart.render();
         const productList = new ProductList();
         const prodListEl = productList.render();
 
-        renderHook.append(cartEl);
         renderHook.append(prodListEl); 
     }
 }
 class App {
+    static cart; //static field, to clarify what this refers to in the class
+
     static init() {
         const shop = new Shop();
         shop.render(); // run render before this.cart because the 
