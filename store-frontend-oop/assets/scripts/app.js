@@ -130,7 +130,7 @@ class ProductItem extends Component {
 }
 
 class ProductList extends Component{
-    products = []; // empty array, sample data parsed into consntructor
+    #products = []; // empty array, sample data parsed into consntructor
     constructor (renderHookId) {
         super(renderHookId);
         this.fetchProducts();
@@ -138,7 +138,7 @@ class ProductList extends Component{
     }
 
     fetchProducts(){ //creating this method to call the data
-        this.products = [
+        this.#products = [
         new Product('Seedoi 100ml','https://i.imgur.com/HeYV02C.jpg','Start kit', 7.99),
         new Product('Seedoil 250ml',
          'https://i.imgur.com/rqE7Ckq.jpg',
@@ -147,14 +147,14 @@ class ProductList extends Component{
     }
 
     renderProducts() {
-        for (const prod of this.products) {
+        for (const prod of this.#products) {
             new ProductItem(prod, 'prod-list');
         }
     }
 
     render() {
             const prodList = this.createRootElement('ul',  'product-list', [new ElementAttribute('id','prod-list')]); // creating a the list container to insert the data into
-            if (this.products && this.products.length > 0) {
+            if (this.#products && this.#products.length > 0) {
                 this.renderProducts();
             }
             //prodList.id = 'prod-list'; could be removed after extension because id being passed via Component class

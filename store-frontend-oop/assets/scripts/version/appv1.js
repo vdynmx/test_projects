@@ -59,12 +59,12 @@ class ProductList {
     prodList.className = 'product-list';
     for (const prod of this.products) { // prod refers to each element in this.products. this.products refers to the ProductList class and the declared prodcuts array 
       const productItem = new ProductItem(prod); //now that we are in each prooduct element we are creating a variable productItem that holds a new class instance of productitem which passes in the value of (looping inside the products array, each time having the ability to manipulate each Product class instance)
-      const prodEl = productItem.render(); //now that productItem has values assigned I can assign the class render method into a variable 
+      const prodEl = productItem.render(); //now that productItem has values assigned I can assign the class render method into a variable which in  turn returns the value of ProductItem class render prodEl is being saved now.
       prodList.append(prodEl); // Now accessing the unordered list item I append all the content in that productItem variable with values assigned and render it for each element run in the loop
-    }
-    renderHook.append(prodList); //in the app div I append 
+    } // QQ3 not sure how multiple prodEl's are stored in one prodList
+    renderHook.append(prodList); //QQ4 not sure how the prodList is appended to the renderHook
   }
 }
 
-const productList = new ProductList();
-productList.render();
+const productList = new ProductList(); // this creates a new instance of ProductList (since the values are hardcoded they are always the same)
+productList.render(); //we call the render function from ProductList on the new classinstance object
