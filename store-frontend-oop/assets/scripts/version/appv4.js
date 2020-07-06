@@ -40,7 +40,7 @@ class ProductItem {
   }
 
   addToCart() {
-    App.addProductToCart(this.product);
+    App.addProductToCart(this.product); // ?? Why 
   }
 
   render() {
@@ -98,8 +98,8 @@ class Shop {
   render() {
     const renderHook = document.getElementById('app');
 
-    this.cart = new ShoppingCart();
-    const cartEl = this.cart.render();
+    this.cart = new ShoppingCart(); //we create a property with a shopping cart object. Why use this. cart ?
+    const cartEl = this.cart.render(); //results ofthe method from the shoppingcart object
     const productList = new ProductList();
     const prodListEl = productList.render();
 
@@ -109,20 +109,21 @@ class Shop {
 }
 
 class App { 
-  static cart; //static dosent concern itself with 
+  static cart; //why add a static property ? We are accessing cart from Shop class ?
 
   static init() {
     const shop = new Shop();
     shop.render();
-    this.cart = shop.cart;
+    this.cart = shop.cart; //create a new property of the shop.cart
   }
 
-  static addProductToCart(product) {
+  static addProductToCart(product) { //expect the product here ? not sure how you conclude why you would need this static method ?
     this.cart.addProduct(product);
   }
 }
 
-App.init();
+App.init(); // ?? executes init method which is used to rerun the Shop Class which in turn updates the shoppingcart. Reason why its static is so the same one shopping cart gets updated and not have multiple shoppingcarts with different values . Since its not an instance there is no object itself. Just reruns the Class, sort of like a template refresh ?
+
 
 
 

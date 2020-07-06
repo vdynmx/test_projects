@@ -1,3 +1,4 @@
+// Getters and Setters
 class Product {
   // title = 'DEFAULT';
   // imageUrl;
@@ -14,24 +15,26 @@ class Product {
 
 class ShoppingCart {
   items = [];
-
+// Adding Getter and Setter to modify Cart totals
+// To set the ShoppingCart Price and display
   set cartItems(value) {
-    this.items = value;
-    this.totalOutput.innerHTML = `<h2>Total: \$${this.totalAmount.toFixed(2)}</h2>`;
+    this.items = value; // ?? overriting the item array with a new one (array of cart items) ? which one ? where does this value come from ?
+    this.totalOutput.innerHTML = `<h2>Total: \$${this.totalAmount.toFixed(2)}</h2>`; 
   }
-
+  //get will return a value to use, so we are using getting to calculate the cart total item price
   get totalAmount() {
     const sum = this.items.reduce(
-      (prevValue, curItem) => prevValue + curItem.price,
+      (prevValue, curItem) => { prevValue + curItem.price; },
       0
     );
     return sum;
   }
 
   addProduct(product) {
-    const updatedItems = [...this.items];
-    updatedItems.push(product);
-    this.cartItems = updatedItems;
+    //Addproduct is being modiefied due to the setter above ? why ?
+    const updatedItems = [...this.items]; // So first what we do is updaate the updatedItems array to what we currently have with this.items
+    updatedItems.push(product); // new product items being pushed to the end of the updatedItems array
+    this.cartItems = updatedItems; // referring to the setter cartItems to a new value will trigger the setter above to add the updateItems array passed in via value
   }
 
   render() {
