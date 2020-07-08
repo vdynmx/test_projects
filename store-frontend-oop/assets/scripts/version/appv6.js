@@ -23,7 +23,10 @@ class ElementAttribute {
 class Component { // Class to create basic dom elements via templetization 
   constructor(renderHookId) { //?? Not sure why you need a contructor here.
     this.hookId = renderHookId;
+    this.render();
   }
+
+  render() {} //as the parent class and due to render being called inthe constructor, just easier to show that the render method code not being called from main but from individual child render methods
 
   createRootElement(tag, cssClasses, attributes) {
     const rootElement = document.createElement(tag);
@@ -36,7 +39,7 @@ class Component { // Class to create basic dom elements via templetization
       }
     }
     document.getElementById(this.hookId).append(rootElement); // tgus is where the appending to the DOM happens. ?? 
-    return rootElement;
+    return rootElement; //?? why am I returning rootElement ?
   }
 }
 
@@ -80,8 +83,9 @@ class ShoppingCart extends Component {
   }
 }
 
-class ProductItem {
-  constructor(product) {
+class ProductItem extends Component {
+  constructor(product, renderHookId) {
+    super(renderHookId); //Super to extend the second variable renderHookId, this will use the Component method
     this.product = product;
   }
 
@@ -90,8 +94,9 @@ class ProductItem {
   }
 
   render() {
-    const prodEl = document.createElement('li');
-    prodEl.className = 'product-item';
+    //since we extended we can templetize the create element part
+    const prodEl = this.createRootElement('li', 'product-item');
+    //prodEl.className = 'product-item';
     prodEl.innerHTML = `
         <div>
           <img src="${this.product.imageUrl}" alt="${this.product.title}" >
@@ -102,14 +107,14 @@ class ProductItem {
             <button>Add to Cart</button>
           </div>
         </div>
-      `;
+      `; // this is custom logic and stays
     const addCartButton = prodEl.querySelector('button');
     addCartButton.addEventListener('click', this.addToCart.bind(this));
-    return prodEl;
+    //return prodEl; no longer need to return, because the element will be hooked into the dom via the Component method createRootElement
   }
 }
 
-class ProductList {
+class ProductList extends Component {
   products = [
     new Product(
       'A Pillow',
@@ -125,15 +130,16 @@ class ProductList {
     )
   ];
 
-  constructor() {}
+  constructor(renderHookId) {
+    super(renderHookId);
+  }
 
   render() {
-    const prodList = document.createElement('ul');
-    prodList.className = 'product-list';
+    const prodList = this.createElement('ul', 'product-list', [new ElementAttribute('id', 'prod-list')]);
     for (const prod of this.products) {
-      const productItem = new ProductItem(prod);
-      const prodEl = productItem.render();
-      prodList.append(prodEl);
+      const productItem = new ProductItem(prod, 'prod-list'); //passing second item to the productItem constructor. Now we have to modify the ProductITem class to accept second one
+      /*const prodEl = */ productItem.render();
+      //prodList.append(prodEl);
     }
     return prodList;
   }
@@ -142,7 +148,7 @@ class ProductList {
 class Shop {
   render() {
     const renderHook = document.getElementById('app');
-
+    
     this.cart = new ShoppingCart();
     /*const cartEl = */this.cart.render(); // no longer need
     const productList = new ProductList();
