@@ -1,4 +1,5 @@
-// Adding Shop Class as the main parent Class to combine all main classes 
+// Adding Shop Class for calculation
+
 class Product {
   // title = 'DEFAULT';
   // imageUrl;
@@ -24,7 +25,7 @@ class ShoppingCart {
      <button>Order Now!</button>
     `;
     cartEl.className = 'cart';
-    return cartEl; // QQ7 Return the value to use in the DOM ? What would happen if you dont return cartEl ? How is the process done here when render() is run with or without returning.
+    return cartEl; // Whereever we create the shoppingcart we can append it to the DOM
   }
 }
 
@@ -91,16 +92,19 @@ class ProductList {
   }
 }
 
-class Shop { // This is the class where we use the shopping cart, in the shop. It combines productList and ShoppingCart. This is the main parent 
+class Shop { // This is the class where we use the shopping cart, in the shop. It combines productList and ShoppingCart.  
     render(){
     const renderHook = document.getElementById('app'); // as shop is now the main render mechanism, render hook  gets refactored into here so all elements get updated again
-    const cart = new ShoppingCart();
-    const cartEl = cart.render(); // we store the class method so we can append it below 
+    const cart = new ShoppingCart(); //Instantiate the shoppingcart here
+    const cartEl = cart.render(); // Returns cartEl, now at it is saved in a location we can choose where to place it with appending it below 
     const productList = new ProductList();
     const prodListEl = productList.render(); // we store this class method so it can be appended below
 
     renderHook.append(cartEl); // we append the shopping car render method into the app element
     renderHook.append(prodListEl); // we append the ProductList render method into the app element
+    // neither of these elements are hierarchical to another thats why there are two appends
     }
 }
 
+const shop = new Shop();
+shop.render();

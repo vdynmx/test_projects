@@ -1,4 +1,4 @@
-// Working with the Add to Cart button
+// bind() method on  Add to Cart button click eventListener
 class Product {
   // title = 'DEFAULT';
   // imageUrl;
@@ -40,6 +40,7 @@ class ProductItem {
     const addCartButton = prodEl.querySelector('button'); //Step1 getting access to the button. Creating a variable that stores the direct path to the button via prodEl that stores the initial Element and we select its content via querySelector.
     // QQ5 Does querySelector now go through all the content that is stored in the prodEl schema looking for button, or does when using QuerySelector we know that the html is only stored in innerHTML ?
     addCartButton.addEventListener('click', this.addToCart.bind(this)); // QQ6 this.addToCart shows undefined because this references the document window ?! if I run the bind method and use this. JS then beacuse we use this binds addToCart to the ProductItem instance ? 
+    // Consider behavior; Javascript will bind the addToCart function to the source of the event ( Window document ) and not to the object because it will have been created by then already. So we have to tell Javascript to bind the event to the object it was created in by using this.
     return prodEl;
   }
 }
