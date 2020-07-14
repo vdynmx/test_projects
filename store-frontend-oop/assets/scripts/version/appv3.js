@@ -15,7 +15,7 @@ class Product {
 }
 // Create a shopping car class because everybodys shopping cart will be different and this is to templatize view and logic
 class ShoppingCart {
-  items = [];
+  items = []; // empty because you start off a shopping cart empty.
 
   render(){
     const cartEl = document.createElement('section');

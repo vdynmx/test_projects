@@ -1,4 +1,4 @@
-// Getters and Setters
+// Getters and Setters to set the shopping cart amount
 class Product {
   // title = 'DEFAULT';
   // imageUrl;
@@ -14,16 +14,16 @@ class Product {
 }
 
 class ShoppingCart {
-  items = [];
+  items = []; // starting with empty items array for each ShoppingCart object instance
 // Adding Getter and Setter to modify Cart totals
 // To set the ShoppingCart Price and display
-  set cartItems(value) {
-    this.items = value; // ?? overriting the item array with a new one (array of cart items) ? which one ? where does this value come from ?
-    this.totalOutput.innerHTML = `<h2>Total: \$${this.totalAmount.toFixed(2)}</h2>`; 
+  set cartItems(value) { // method name can be anything. I expect value to the an array of cart items
+    this.items = value; //overriting the item array with a new one 
+    this.totalOutput.innerHTML = `<h2>Total: \$${this.totalAmount.toFixed(2)}</h2>`; //Setting we want to set the value and update it when it is run.
   }
   //get will return a value to use, so we are using getting to calculate the cart total item price
-  get totalAmount() {
-    const sum = this.items.reduce(
+  get totalAmount() { // getter method name can be anything and we return a value with the get method.
+    const sum = this.items.reduce( // allows us to combine all specific properties of an array into one value. Aka akk up the price property of every element in the items array.
       (prevValue, curItem) => { prevValue + curItem.price; },
       0
     );
@@ -32,7 +32,8 @@ class ShoppingCart {
 
   addProduct(product) {
     //Addproduct is being modiefied due to the setter above ? why ?
-    const updatedItems = [...this.items]; // So first what we do is updaate the updatedItems array to what we currently have with this.items
+    const updatedItems = [...this.items]; // So first what we do is updaate the updatedItems array to what we currently have with this.items. We update the array with a new copy
+    // logic: before a new product is being passed in to the array, we confirm the existing array by copying it into a variable.
     updatedItems.push(product); // new product items being pushed to the end of the updatedItems array
     this.cartItems = updatedItems; // referring to the setter cartItems to a new value will trigger the setter above to add the updateItems array passed in via value
   }

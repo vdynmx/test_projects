@@ -1,4 +1,4 @@
-//Communicating between classses, updating the ShoppingCart
+//Communicating between classses, updating the ShoppingCart to re-render
 
 class Product {
   // title = 'DEFAULT';
@@ -18,8 +18,9 @@ class ShoppingCart {
   items = [];
 
   addProduct(product) {
-    this.items.push(product);
-    this.totalOutput.innerHTML = `<h2>Total: \$${1}</h2>`;
+    this.items.push(product); //adding the product into the shopping cart array
+    this.totalOutput.innerHTML = `<h2>Total: \$${1}</h2>`; //using this to overrite the total set in the default render. . 
+
   }
 
   render() {
@@ -29,7 +30,7 @@ class ShoppingCart {
       <button>Order Now!</button>
     `;
     cartEl.className = 'cart';
-    this.totalOutput = cartEl.querySelector('h2');
+    this.totalOutput.innerHTML = cartEl.querySelector('h2');
     return cartEl;
   }
 }
@@ -40,8 +41,9 @@ class ProductItem {
   }
 
   addToCart() {
-    App.addProductToCart(this.product); // ?? Why 
-  }
+    // ShoppingCart.addProduct we want to call the addProduct method here since a product was added to the cart to update. But I cannot just call a method from a differnt class on an instanciated object. This is where static method comes into play below
+    App.addProductToCart(this.product); // Since App is an outlier layer and holds a static method and is not instantiated we can call it
+  } //this product refers to the product stored in ProductItem
 
   render() {
     const prodEl = document.createElement('li');
@@ -93,12 +95,12 @@ class ProductList {
   }
 }
 
-class Shop {
+class Shop { //now the shop is initialized via app
   
   render() {
     const renderHook = document.getElementById('app');
 
-    this.cart = new ShoppingCart(); //we create a property with a shopping cart object. Why use this. cart ?
+    this.cart = new ShoppingCart(); // Now the ShoppingCart itself is a property of the Shop
     const cartEl = this.cart.render(); //results ofthe method from the shoppingcart object
     const productList = new ProductList();
     const prodListEl = productList.render();
@@ -108,22 +110,23 @@ class Shop {
   }
 }
 
-class App { 
-  static cart; //why add a static property ? We are accessing cart from Shop class ?
+class App { // Outerlater to shop, since every user will only have one shopping cart but changes to it. the out layer deals with update methods for example
+  static cart; //static field, this is where the create cart lives from ShoppingCart so the same one gets used. Also shows that the cart is not ment to be instanciated
 
-  static init() {
+  static init() { //
     const shop = new Shop();
-    shop.render();
-    this.cart = shop.cart; //create a new property of the shop.cart
+    shop.render(); //need to run render method before I assign the cart property. because the method creates it.
+    this.cart = shop.cart; //Now because Shop is instanciated via App and we have cart as the property of shop via the Shop class we can assign this instanciated cart to a the current Apps property
   }
 
-  static addProductToCart(product) { //expect the product here ? not sure how you conclude why you would need this static method ?
-    this.cart.addProduct(product);
-  }
+  static addProductToCart(product) { // We create this static method here to run the addProduct method from ShoppingCart on the Cart that was instanciated already. (sort of like an update command so we dont create anything new)
+    this.cart.addProduct(product); // since this.cart was incanciated above and we now have access to it via a static init. we can run a static method on that cart property. that lives in ShoppingCart Class
+   //the addProduct method in ShoppingClart expects a product value being passed, thus the static method needs to pass one aswell
+  }// App Class and the addProductToCart method are sort of a proxy that funnels. 
 }
 
 App.init(); // ?? executes init method which is used to rerun the Shop Class which in turn updates the shoppingcart. Reason why its static is so the same one shopping cart gets updated and not have multiple shoppingcarts with different values . Since its not an instance there is no object itself. Just reruns the Class, sort of like a template refresh ?
-
+// Since we dont instantiate App unlike Shop, this is were we can run the app for example
 
 
 
