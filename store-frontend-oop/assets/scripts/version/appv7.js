@@ -1,3 +1,4 @@
+// delayed loading of data using methods
 class Product {
   // title = 'DEFAULT';
   // imageUrl;
@@ -20,9 +21,12 @@ class ElementAttribute {
 }
 
 class Component {
-  constructor(renderHookId) {
-    this.hookId = renderHookId;
-    this.render();
+  constructor(renderHookId, shouldRender = true) { //because render is being called on all classes even those that dont have data yet, sending in conditional statement
+    this.hookId = renderHookId; 
+    if (shouldRender) {
+      this.render();
+    }
+    
   }
 
   render() {}
@@ -82,8 +86,9 @@ class ShoppingCart extends Component {
 
 class ProductItem extends Component {
   constructor(product, renderHookId) {
-    super(renderHookId);
+    super(renderHookId, false); // passing false to the Parent constructor so I can call render manually and its not called automatically
     this.product = product;
+    this.render(); // now we call render manually after we set the product with data a line above
   }
 
   addToCart() {
@@ -109,33 +114,48 @@ class ProductItem extends Component {
 }
 
 class ProductList extends Component {
-  products = [
-    new Product(
-      'A Pillow',
-      'https://www.maxpixel.net/static/photo/2x/Soft-Pillow-Green-Decoration-Deco-Snuggle-1241878.jpg',
-      'A soft pillow!',
-      19.99
-    ),
-    new Product(
-      'A Carpet',
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Ardabil_Carpet.jpg/397px-Ardabil_Carpet.jpg',
-      'A carpet which you might like - or not.',
-      89.99
-    )
-  ];
+  products = [];
 
   constructor(renderHookId) {
     super(renderHookId);
+    this.fetchProducts(); // fetching products as a starter method for the Class
+    
   }
+
+  fetchProducts() { // Method to create the data
+    products = [
+      new Product(
+        'A Pillow',
+        'https://www.maxpixel.net/static/photo/2x/Soft-Pillow-Green-Decoration-Deco-Snuggle-1241878.jpg',
+        'A soft pillow!',
+        19.99
+      ),
+      new Product(
+        'A Carpet',
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Ardabil_Carpet.jpg/397px-Ardabil_Carpet.jpg',
+        'A carpet which you might like - or not.',
+        89.99
+      )
+    ];
+    this.renderProducts(); //render called here too for when I get the products.
+  }
+
+  renderProducts() { //where we go through all products put into a method so we can control when it is called, which is once we have data to go through.
+    for (const prod of this.products) {
+      new ProductItem(prod, 'prod-list');
+    }
+  }
+
+
 
   render() {
     this.createRootElement('ul', 'product-list', [
       new ElementAttribute('id', 'prod-list')
     ]);
-    for (const prod of this.products) {
-      new ProductItem(prod, 'prod-list');
+    if (this.products && this.products.length > 0) {// now checking to see if data exists to render
+      this.renderProducts();
     }
-  }
+    }
 }
 
 class Shop {
