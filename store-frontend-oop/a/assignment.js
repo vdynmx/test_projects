@@ -1,30 +1,34 @@
 class Course {
-    constructor(title, length, price) {
-        this.title = title;
-        this.length = length;
-        //this.price = price;
-        checkPrice(price);
+    #price;
+
+    constructor(courseTitle, courseLength, coursePrice) {
+        this.title = courseTitle;
+        this.length = courseLength;
+        this.price = coursePrice;
+        console.log(this.price);
     }
 
-    set checkPrice(value) {
+    get price(){
+        return '$' + this.#price;
+    }
+
+    set price(value) {
         console.log(value);
-        if(value > 0) {
-            this.price = value; 
+        if(value < 0) {
+           throw 'Invalid value'; 
         }
-    }
-
-    get displayPrice (){
-        const priceFormat = '$' + this.price;
-        return priceFormat;
+        this.#price = value;
     }
 
     lengthprice() {
-        const lengthprice = this.length / this.price;
+        const lengthprice = this.length / this.#price;
         console.log(lengthprice); 
     }
 
     summary () {
-        console.log('the course ' + this.title + ' spans a whole ' + this.length + 'hours. At a bargain price of $' + this.price);
+        console.log(
+            `the course ${this.title} +  spans a whole ${this.length} hours. At a bargain price of ${this.price}`
+            );
     }
 }
 
@@ -57,7 +61,7 @@ class CourseItem {
     }
 
     render() {
-        console.log(this.course);
+        //console.log(this.course);
         this.course.lengthprice();
         this.course.summary();
     }
@@ -65,7 +69,7 @@ class CourseItem {
 
 class CourseList {
     courses = [
-        new Course ('Beginning Javascript', 45, -9.99),
+        new Course ('Beginning Javascript', 45, 9.99),
         new Course ('Ruby on Rails', 30, 19.99)
     ]
 
@@ -82,8 +86,8 @@ class CourseList {
 }   
 class PracticalList {
     courses = [
-        new PracticalCourse ('Beginning Javascript', 45, 9.99, 5),
-        new PracticalCourse ('Ruby on Rails', 30, 19.99, 3)
+        new PracticalCourse ('Beginning Javascript', 12, 79.99, 5),
+        new PracticalCourse ('Ruby on Rails', 13, 3.99, 3)
     ]
     render() {
         for(const cour of this.courses) {
@@ -95,16 +99,6 @@ class PracticalList {
     }
     
 }
-/*
-    prac() {
-        for(const cour of this.courses) {
-            const courseItem = new PracticalCourse(cour);
-            courseItem.numOfExercises = 3;
-            courseItem.render();
-        }
-    }
-    */
-
 
 const courseList = new CourseList();
 courseList.render();
@@ -112,4 +106,3 @@ const pracList = new PracticalList();
 pracList.render();
 const theoCourse = new TheoreticalCourse();
 theoCourse.publish();
-/*courseList.prac();*/
