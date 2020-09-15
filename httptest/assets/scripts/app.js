@@ -1,3 +1,7 @@
+
+const listElement = document.querySelector('.posts');
+const postTemplate = document.getElementById('single-post');
+
 //Create http request object to send request
 const xhr = new XMLHttpRequest(); //?? Why do I need to creat an object to sent http request ?
 
@@ -9,9 +13,17 @@ xhr.responseType = 'json';
 xhr.onload = function() {
     //const listOfPosts = JSON.parse(xhr.response); //Storing the converted JS values from the XHR JSON response in listofPosts
     const listOfPosts = xhr.response; //because we set response type to json above we dont have to parse it in
-    console.log(listOfPosts);
+    // have to set looping function inside here, because we dont know howlong it took to store the response.
+    for (const post of listOfPosts) {
+        const postEl = document.importNode(postTemplate.content, true);
+        postEl.querySelector('h2').textContent = post.title.toUpperCase();
+        postEl.querySelector('p').textContent = post.body;
+        listElement.append(postEl);
+    }
 };
 
 xhr.send();
 
 //JSON method stringify converts JS value to JSON string. parse converts JSON string to JS value. Format / structure wise so it can be used
+
+
