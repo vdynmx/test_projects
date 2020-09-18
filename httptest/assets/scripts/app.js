@@ -33,7 +33,7 @@ xhr.send();
 const listElement = document.querySelector('.posts');
 const postTemplate = document.getElementById('single-post');
 const form = document.querySelector('#new-post form');
-const fetchButton = document.querySelector('#availbale-posts button')
+const fetchButton = document.querySelector('#available-posts button')
 
 function sendHttpRequest(method, url, data) {
     const promise = new Promise((resolve, reject) => {
