@@ -29,7 +29,7 @@ xhr.send();
 */
 // ------------------------------------------------------------------------
 // Restructuring code for Post request with promises and connecting UI to send formdata
-
+/*
 const listElement = document.querySelector('.posts');
 const postTemplate = document.getElementById('single-post');
 const form = document.querySelector('#new-post form');
@@ -89,6 +89,97 @@ form.addEventListener('submit', event => { //I call the event object itself to c
     //now that the values that currently are populated in the html form have value and have been now stored in variables we pass them along tot he createPost function below.
     createPost(enteredTitle, enteredContent); 
 });
-
+*/
 
 //------------------------------------------------------------
+// DELETE method and Error Handling
+
+const listElement = document.querySelector('.posts');
+const postTemplate = document.getElementById('single-post');
+const form = document.querySelector('#new-post form');
+const fetchButton = document.querySelector('#available-posts button')
+// How that we want to post a listener across the whole list so we can have an geeneral event that looks for the specific id we assign
+const postList = document.querySelector('ul'); // whole li list is the ul 
+
+function sendHttpRequest(method, url, data) {
+    const promise = new Promise((resolve, reject) => {
+       const xhr = new XMLHttpRequest();
+
+
+    xhr.open(method, url); 
+    
+    xhr.responseType = 'json';
+    
+    xhr.onload = function() {
+        if(xhr.status >= 200 && xhr.status < 300) { // I'm checking the xhr status value for success, if no success I throw error.
+            resolve(xhr.response);
+        } else{
+            reject(new Error('Something went wrong.'))
+        }
+        
+    };
+    
+    xhr.onerror = function() { //onerror deals with clientside error, not serverside where we get back a 404 error for example. Like if the request cant send,timesout
+        //console.log(xhr.response);
+        //console.log(xhr.status);
+        reject(new Error('Somethign went wrong'));
+    }
+
+    xhr.send(JSON.stringify(data));  
+    });
+    return promise;
+
+}
+
+async function fetchPosts() {
+    // debugging error setup with try and catch 
+    try {
+        const responseData = await sendHttpRequest(
+        'GET', 
+        'https://jsonplaceholder.typicode.com/posts'
+        );
+    
+      const listOfPosts = responseData; 
+        for (const post of listOfPosts) {
+            console.log(post);
+            const postEl = document.importNode(postTemplate.content, true);
+            postEl.querySelector('h2').textContent = post.title.toUpperCase();
+            postEl.querySelector('p').textContent = post.body;
+            postEl.querySelector('li').id = post.id; // Assinging an post ID to the li ID so the whole li can be identified. <li id='#'> 
+            listElement.append(postEl);
+        }  
+    } catch (error) {
+        alert(error.message);
+    }
+    
+}
+
+async function createPost (title, content) {
+    const userId = Math.random();
+    const post = {
+        title: title,
+        body: content,
+        userId: userId
+    };
+
+    sendHttpRequest('POST', 'https://jsonplaceholder.typicode.com/posts', post)
+}
+
+fetchButton.addEventListener('click', fetchPosts);
+form.addEventListener('submit', event => { 
+    event.preventDefault(); 
+    const enteredTitle = event.currentTarget.querySelector('#title').value; 
+    const enteredContent = event.currentTarget.querySelector('#content').value;
+    
+    createPost(enteredTitle, enteredContent); 
+});
+
+postList.addEventListener('click', event => {
+    if (event.target.tagName ===  'BUTTON') { //targeting a specific item called button, since we only have one button this will work
+        //console.log('click onn button'); //checking to see if the proper element is being targeted
+        const postId = event.target.closest('li').id; // Now we are saving the li id of the post where the pressed the delete button on. Removing il because its parent and will remove all elements
+        sendHttpRequest('DELETE', `https://jsonplaceholder.typicode.com/posts/${postId}`)
+    }
+
+
+})
