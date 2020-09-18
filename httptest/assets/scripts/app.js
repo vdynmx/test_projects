@@ -3,10 +3,11 @@ const listElement = document.querySelector('.posts');
 const postTemplate = document.getElementById('single-post');
 
 //Create http request object to send request
-const xhr = new XMLHttpRequest(); //?? Why do I need to creat an object to sent http request ?
+const xhr = new XMLHttpRequest(); //?? Why do I need to creat an object to sent http request ? ! Is is that so JS knows the body template to store the info being pulled into it?
 
 //to start configure request
 xhr.open('GET', 'https://jsonplaceholder.typicode.com/posts'); //first step twords confirguing request. First argument to to set the type of action. Second argument is to URL
+//?? open is a method inside XMLHTTPRequest class?
 
 xhr.responseType = 'json';
 
@@ -27,17 +28,18 @@ xhr.send();
 //JSON method stringify converts JS value to JSON string. parse converts JSON string to JS value. Format / structure wise so it can be used
 */
 // ------------------------------------------------------------------------
-// Restructuring code for Post request with promises
+// Restructuring code for Post request with promises and connecting UI to send formdata
 
 const listElement = document.querySelector('.posts');
 const postTemplate = document.getElementById('single-post');
+const form = document.querySelector('#new-post form');
+const fetchButton = document.querySelector('#availbale-posts button')
 
-//gonna create a function that can both get and post methods
-function sendHttpRequest(method, url) {
+function sendHttpRequest(method, url, data) {
     const promise = new Promise((resolve, reject) => {
        const xhr = new XMLHttpRequest();
 
-    //to start configure request
+
     xhr.open(method, url); 
     
     xhr.responseType = 'json';
@@ -46,7 +48,7 @@ function sendHttpRequest(method, url) {
         resolve(xhr.response);
     };
     
-    xhr.send();  
+    xhr.send(JSON.stringify(data));  
     });
     return promise;
 
@@ -60,12 +62,33 @@ async function fetchPosts() {
     
       const listOfPosts = responseData; 
         for (const post of listOfPosts) {
+            console.log(post);
             const postEl = document.importNode(postTemplate.content, true);
             postEl.querySelector('h2').textContent = post.title.toUpperCase();
             postEl.querySelector('p').textContent = post.body;
             listElement.append(postEl);
         }  
 }
-    
+// creating an  async function, because it depends on the user when he submits that content to the backend
+async function createPost (title, content) {
+    const userId = Math.random();
+    const post = {
+        title: title,
+        body: content,
+        userId: userId
+    };
 
-fetchPosts();
+    sendHttpRequest('POST', 'https://jsonplaceholder.typicode.com/posts', post)
+}
+
+fetchButton.addEventListener('click', fetchPosts);
+form.addEventListener('submit', event => { //I call the event object itself to change the behavior
+    event.preventDefault(); //On the event object itself I want to change the default behavior of it sending the form right away, so I call the preventDefault method
+    const enteredTitle = event.currentTarget.querySelector('#title').value; // Selecting the title field in the form and its property value
+    const enteredContent = event.currentTarget.querySelector('#content').value;
+    //now that the values that currently are populated in the html form have value and have been now stored in variables we pass them along tot he createPost function below.
+    createPost(enteredTitle, enteredContent); 
+});
+
+
+//------------------------------------------------------------
