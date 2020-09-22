@@ -104,6 +104,7 @@ const postList = document.querySelector('ul'); // whole li list is the ul
 function sendHttpRequest(method, url, data) {
     const promise = new Promise((resolve, reject) => {
        const xhr = new XMLHttpRequest();
+       xhr.setRequestHeader('Content-Type', 'application/json')
 
 
     xhr.open(method, url); 
@@ -195,19 +196,38 @@ const fetchButton = document.querySelector('#available-posts button')
 const postList = document.querySelector('ul'); 
 
 function sendHttpRequest(method, url, data) {
-    
-   return fetch(url).then(response => { // the data returned through fetch is not formated, streamed unformatted resposne body.
-       return response.json(); // this allows us to call the json method on the response to format data to be useful.
+    // method allows you to set th type of action which is configured in an object including with thow the body should be formatted
+   // global available function in the browser. By default will send GET request. By default promise based
+  //fetch dosent give parsed response like xmlhttprequest does, instead it provides a streamed response
+  return fetch(url, { 
+       method: method,
+       body: JSON.stringify(data), // to set the way the data should be structured
+       headers: {
+           'Content-Type': 'application/json' //this tell the server my request has json data
+
+       }
+   }).then(response => { // the data returned through fetch is not formated, streamed unformatted resposne body.
+       if (response.status >= 200 && response.status < 300) {
+        return response.json(); // this allows us to call the json method on the response to format data to be useful.
        // response.text() to retun plain text
        // response.blob() give access to download file
-   }); // global available function in the browser. By default will send GET request. By default promise based
-  //fetch dosent give parsed response like xmlhttprequest does, instead it provides a streamed response
+       } else {
+           return response.json().then(errData => { // sends a promise which is not available in the next line
+           console.log(errData);
+            throw new Error('Something went wrong -server-side');
+       });
+    }
+    }).catch(error => {
+        console.log(error);
+        throw new Error('Soimethign went wrong!');
+    }); // Error handling challenging in FetchAPI as data is streamed and cannot be read/validated
+    
 
 }
 
 async function fetchPosts() {
     
-   // try {
+    try {
         const responseData = await sendHttpRequest(
         'GET', 
         'https://jsonplaceholder.typicode.com/posts'
@@ -222,9 +242,9 @@ async function fetchPosts() {
             postEl.querySelector('li').id = post.id; 
             listElement.append(postEl);
         }  
-   // } catch (error) {
-   //     alert(error.message);
-  //  }
+    } catch (error) {
+        alert(error.message);
+    }
     
 }
 
