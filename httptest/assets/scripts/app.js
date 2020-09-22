@@ -93,7 +93,7 @@ form.addEventListener('submit', event => { //I call the event object itself to c
 
 //------------------------------------------------------------
 // DELETE method and Error Handling
-
+/*
 const listElement = document.querySelector('.posts');
 const postTemplate = document.getElementById('single-post');
 const form = document.querySelector('#new-post form');
@@ -178,6 +178,80 @@ postList.addEventListener('click', event => {
     if (event.target.tagName ===  'BUTTON') { //targeting a specific item called button, since we only have one button this will work
         //console.log('click onn button'); //checking to see if the proper element is being targeted
         const postId = event.target.closest('li').id; // Now we are saving the li id of the post where the pressed the delete button on. Removing il because its parent and will remove all elements
+        sendHttpRequest('DELETE', `https://jsonplaceholder.typicode.com/posts/${postId}`)
+    }
+
+
+})
+*/
+//------------------------------------------------------------------------------------------
+// Fetch API
+
+const listElement = document.querySelector('.posts');
+const postTemplate = document.getElementById('single-post');
+const form = document.querySelector('#new-post form');
+const fetchButton = document.querySelector('#available-posts button')
+
+const postList = document.querySelector('ul'); 
+
+function sendHttpRequest(method, url, data) {
+    
+   return fetch(url).then(response => { // the data returned through fetch is not formated, streamed unformatted resposne body.
+       return response.json(); // this allows us to call the json method on the response to format data to be useful.
+       // response.text() to retun plain text
+       // response.blob() give access to download file
+   }); // global available function in the browser. By default will send GET request. By default promise based
+  //fetch dosent give parsed response like xmlhttprequest does, instead it provides a streamed response
+
+}
+
+async function fetchPosts() {
+    
+   // try {
+        const responseData = await sendHttpRequest(
+        'GET', 
+        'https://jsonplaceholder.typicode.com/posts'
+        );
+    
+      const listOfPosts = responseData; 
+        for (const post of listOfPosts) {
+            console.log(post);
+            const postEl = document.importNode(postTemplate.content, true);
+            postEl.querySelector('h2').textContent = post.title.toUpperCase();
+            postEl.querySelector('p').textContent = post.body;
+            postEl.querySelector('li').id = post.id; 
+            listElement.append(postEl);
+        }  
+   // } catch (error) {
+   //     alert(error.message);
+  //  }
+    
+}
+
+async function createPost (title, content) {
+    const userId = Math.random();
+    const post = {
+        title: title,
+        body: content,
+        userId: userId
+    };
+
+    sendHttpRequest('POST', 'https://jsonplaceholder.typicode.com/posts', post)
+}
+
+fetchButton.addEventListener('click', fetchPosts);
+form.addEventListener('submit', event => { 
+    event.preventDefault(); 
+    const enteredTitle = event.currentTarget.querySelector('#title').value; 
+    const enteredContent = event.currentTarget.querySelector('#content').value;
+    
+    createPost(enteredTitle, enteredContent); 
+});
+
+postList.addEventListener('click', event => {
+    if (event.target.tagName ===  'BUTTON') { 
+     
+        const postId = event.target.closest('li').id; 
         sendHttpRequest('DELETE', `https://jsonplaceholder.typicode.com/posts/${postId}`)
     }
 
