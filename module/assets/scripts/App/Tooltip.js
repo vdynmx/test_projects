@@ -1,6 +1,6 @@
-import { Component } from './Component.js';
+import { Component } from './Component.js'; // defining what we are importing from Component.js
 
-class Tooltip extends Component {
+export class Tooltip extends Component {
   constructor(closeNotifierFunction, text, hostElementId) {
     super(hostElementId);
     this.closeNotifier = closeNotifierFunction;

@@ -1,4 +1,9 @@
-class ProjectList {
+// import {ProjectItem} from './ProjectItem.js';
+import {ProjectItem as PrjItm} from './ProjectItem.js'; // Creats an alias incase of nameclash
+//import {DOMHelper, moveElement} from '../Utility/DOMHelper.js';
+import * as DOMH from '../Utility/DOMHelper.js' // imports everything that has been exported from the file into the defined object DOMH 
+
+export class ProjectList {
   projects = [];
 
   constructor(type) {
@@ -6,7 +11,8 @@ class ProjectList {
     const prjItems = document.querySelectorAll(`#${type}-projects li`);
     for (const prjItem of prjItems) {
       this.projects.push(
-        new ProjectItem(prjItem.id, this.switchProject.bind(this), this.type)
+        // new ProjectItem(prjItem.id, this.switchProject.bind(this), this.type)
+        new PrjItm(prjItem.id, this.switchProject.bind(this), this.type) // using the alias
       );
     }
     console.log(this.projects);
@@ -55,7 +61,8 @@ class ProjectList {
 
   addProject(project) {
     this.projects.push(project);
-    DOMHelper.moveElement(project.id, `#${this.type}-projects ul`);
+    // moveElement(project.id, `#${this.type}-projects ul`); //using the function which was exported from DOMHelper.js which can be used directly
+    DOMH.moveElement(project.id, `#${this.type}-projects ul`); // using the DOMH object that contains all exports from DOMHelper.js
     project.update(this.switchProject.bind(this), this.type);
   }
 
