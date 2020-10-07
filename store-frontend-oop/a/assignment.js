@@ -1,108 +1,65 @@
 class Course {
-    #price;
-
-    constructor(courseTitle, courseLength, coursePrice) {
-        this.title = courseTitle;
-        this.length = courseLength;
-        this.price = coursePrice;
-        console.log(this.price);
+    constructor (courseTitle, courseLength, coursePrice) {
+        this.title = courseTitle,
+        this.length = courseLength,
+        this.price = coursePrice
     }
-
     get price(){
-        return '$' + this.#price;
+        return '$'+this.price
+    }
+    set price(value){
+        this.price=value;
+    }
+    calculateValue() {
+        return this.length/this.price;
     }
 
-    set price(value) {
-        console.log(value);
-        if(value < 0) {
-           throw 'Invalid value'; 
-        }
-        this.#price = value;
-    }
-
-    lengthprice() {
-        const lengthprice = this.length / this.#price;
-        console.log(lengthprice); 
-    }
-
-    summary () {
-        console.log(
-            `the course ${this.title} +  spans a whole ${this.length} hours. At a bargain price of ${this.price}`
-            );
+    printSummary() {
+        console.log(`Title: ${this.title}, Length: ${this.length}. Price: ${this.price}`);
     }
 }
+
+jsCourse = new Course ('JAvascript 2020', 48, 9.99);
+pyCourse = new Course ('Python 2020', 35, 19.99);
+    
+console.log(jsCourse.price);
+jsCourse.price(10.99)
+
+console.log(pyCourse); 
+console.log(jsCourse.calculateValue());
+console.log(pyCourse.calculateValue());   
+    
+jsCourse.printSummary();
+pyCourse.printSummary();
 
 class PracticalCourse extends Course {
-    constructor(title, length, price, numOfExercises) {
-        super(title, length, price);
-        this.numOfExercises = numOfExercises;
+    constructor(title, legnth, price, exercisesCount){
+        super(title, price, length);
+        this.numOfExercises = exercisesCount;
     }
-    render() {
 
-        console.log(this);
-    }
 }
+const angularCourse = new PracticalCourse (
+    'React Guide',
+    25,
+    10,
+    80
+);
+
+console.log(angularCourse);
+angularCourse.printSummary();
 
 class TheoreticalCourse extends Course {
-    constructor() {
-        super();
-    }
-
     publish() {
-        console.log('publish has run');
-    }
-
-}
-
-
-class CourseItem {
-    constructor(course) {
-        this.course = course;
-    }
-
-    render() {
-        //console.log(this.course);
-        this.course.lengthprice();
-        this.course.summary();
+        console.log('publishihg');
     }
 }
 
-class CourseList {
-    courses = [
-        new Course ('Beginning Javascript', 45, 9.99),
-        new Course ('Ruby on Rails', 30, 19.99)
-    ]
+const flutterCourse = new TheoreticalCourse (
+    'Flutter Course',
+    33,
+    20
+    );
 
-    constructor() {}
-
-    render() {
-        for(const cour of this.courses) {
-            const courseItem = new CourseItem(cour);
-            courseItem.render();
-
-        }
-        
-    }
-}   
-class PracticalList {
-    courses = [
-        new PracticalCourse ('Beginning Javascript', 12, 79.99, 5),
-        new PracticalCourse ('Ruby on Rails', 13, 3.99, 3)
-    ]
-    render() {
-        for(const cour of this.courses) {
-            const pracItem = new CourseItem(cour);
-            pracItem.render();
-
-        }
-        
-    }
-    
-}
-
-const courseList = new CourseList();
-courseList.render();
-const pracList = new PracticalList();
-pracList.render();
-const theoCourse = new TheoreticalCourse();
-theoCourse.publish();
+flutterCourse.printSummary();
+flutterCourse.publish();
