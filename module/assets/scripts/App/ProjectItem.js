@@ -1,5 +1,5 @@
 import { DOMHelper } from '../Utility/DOMHelper.js';
-import { Tooltip } from './Tooltip.js'; 
+//import { Tooltip } from './Tooltip.js';  commenting out to relocate import section to be dynamic
 
 export class ProjectItem {
   hasActiveTooltip = false;
@@ -18,7 +18,9 @@ export class ProjectItem {
     }
     const projectElement = document.getElementById(this.id);
     const tooltipText = projectElement.dataset.extraInfo;
-    const tooltip = new Tooltip(
+    import('./Tooltip').then( module => {
+      // adding the tooltip creation code into the promise to create 
+      const tooltip = new Tooltip(
       () => {
         this.hasActiveTooltip = false;
       },
@@ -27,6 +29,8 @@ export class ProjectItem {
     );
     tooltip.attach();
     this.hasActiveTooltip = true;
+    });
+    
   }
 
   connectDrag() {

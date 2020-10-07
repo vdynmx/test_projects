@@ -1,6 +1,8 @@
-import { Component } from './Component.js'; // defining what we are importing from Component.js
+//import { Component } from './Component.js'; // defining what we are importing from Component.js
+//import Cmpnt from './Component.js'; // Because its not wrapped in {} JS thinks its default and you can pick your own name
+import Cmpnt, { doSomething } from './Component.js'; // Can use default and non default
 
-export class Tooltip extends Component {
+export class Tooltip extends Cmpnt {
   constructor(closeNotifierFunction, text, hostElementId) {
     super(hostElementId);
     this.closeNotifier = closeNotifierFunction;
