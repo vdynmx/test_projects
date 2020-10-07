@@ -1,3 +1,5 @@
+// Pure functions always produce the same results 
+
 function add(num1, num2) {
   return num1 + num2;
 }
@@ -7,9 +9,12 @@ function add(num1, num2) {
 console.log(add(1, 5)); // 6
 console.log(add(12, 15)); // 27
 
+// Not pure function since the random function makes the output unpredictable
 function addRandom(num1) {
   return num1 + Math.random();
 }
+
+//Side Effetcs change things outside of function itself
 
 console.log(addRandom(5));
 
@@ -17,7 +22,7 @@ let previousResult = 0;
 
 function addMoreNumbers(num1, num2) {
   const sum = num1 + num2;
-  previousResult = sum;
+  previousResult = sum; // we introduce a side effect here because we set a value to a varible define outside the function itself
   return sum;
 }
 
@@ -30,7 +35,11 @@ function printHobbies(h) {
   console.log(h);
 }
 
+// We change the array, arrays are objects and objects are reference values. We changed the original array
+
 printHobbies(hobbies);
+
+
 
 let multiplier = 1.1;
 
