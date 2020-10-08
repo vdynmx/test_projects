@@ -18,9 +18,9 @@ export class ProjectItem {
     }
     const projectElement = document.getElementById(this.id);
     const tooltipText = projectElement.dataset.extraInfo;
-    import('./Tooltip').then( module => {
+    import('./Tooltip').then( module => { // dynamic import
       // adding the tooltip creation code into the promise to create 
-      const tooltip = new Tooltip(
+      const tooltip = new module.Tooltip(
       () => {
         this.hasActiveTooltip = false;
       },
