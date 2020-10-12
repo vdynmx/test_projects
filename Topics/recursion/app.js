@@ -39,19 +39,19 @@ function printHobbies(h) {
 
 printHobbies(hobbies);
 
-
+//------------ Factory Function
 
 let multiplier = 1.1;
 
-function createTaxCalculator(tax) {
-  function calculateTax(amount) {
+function createTaxCalculator(tax) { 
+  function calculateTax(amount) { // due to scope tax is available from the outer function
     console.log(multiplier);
     return amount * tax * multiplier;
   }
 
   return calculateTax;
-}
-
+}// Closure -> each function closes over its surrounding envviorment and memorized variables.
+// each function has its own lexical enviorment (function scope)
 const calculateVatAmount = createTaxCalculator(0.19);
 const calculateIncomeTaxAmount = createTaxCalculator(0.25);
 
@@ -60,11 +60,14 @@ const calculateIncomeTaxAmount = createTaxCalculator(0.25);
 console.log(calculateVatAmount(100));
 console.log(calculateVatAmount(200));
 
+//--------- Closure
+
 let userName = 'Max';
 
 function greetUser() {
-  // let name = 'Anna';
-  console.log('Hi ' + name);
+  // let name = 'Anna'; // Only when the function dosent find a variable inside the function will it look upward to find 
+  // let name = userName;
+  console.log('Hi ' + name); // locks in the variable itself on first run
 }
 
 let name = 'Maximilian';
@@ -73,29 +76,33 @@ userName = 'Manuel';
 
 greetUser();
 
+//----- Recursion
 
 // function powerOf(x, n) {
 //   let result = 1;
 
 //   for (let i = 0; i < n; i++) {
-//     result *= x;
+//     result *= x; // result = result * x;
 //   }
 
 //   return result;
 // }
 
+// Point of recursion is that the function calls itself
 
 function powerOf(x, n) {
 
   // if (n === 1) {
-  //   return x;
+  //   return x;  // base case, have to have an end condition
   // }
-  // return x * powerOf(x, n - 1);
+  // return x * powerOf(x, n - 1); // we increment one down each time it runs
 
-  return n === 1 ? x : x * powerOf(x, n - 1);
+  return n === 1 ? x : x * powerOf(x, n - 1); // Turnary expression
 }
 
 console.log(powerOf(2, 3)); // 2 * 2 * 2
+
+//---- Advanced Rescursion
 
 const myself = {
   name: 'Max',
@@ -122,16 +129,19 @@ const myself = {
   ]
 };
 
+// difficult to cycle through unknown tree structure for example. Hierarchical loop nightmare
+
+
 function getFriendNames(person) {
   const collectedNames = [];
 
-  if (!person.friends) {
-    return [];
+  if (!person.friends) { // If object that is being cycled through dosent have friends, hence falsy.
+    return []; // undefined or empty and we return empty array.
   }
   
-  for (const friend of person.friends) {
-    collectedNames.push(friend.name);
-    collectedNames.push(...getFriendNames(friend));
+  for (const friend of person.friends) { // go through all friends of the person friends. Cycling throuhg the friends property of the object
+    collectedNames.push(friend.name); // add the friend to the collectedNames; This step would be okay for just 1 level.
+    collectedNames.push(...getFriendNames(friend)); // Recursion; the spread opperator avoid nesting of multiple arrays due to hierachy
   }
   
   return collectedNames;
