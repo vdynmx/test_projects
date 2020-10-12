@@ -11,10 +11,10 @@ function randomIntBetween(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min); // 10.999999999999 => 10, floor rounds down to the closest integer
 }
 
-console.log(randomIntBetween(1, 10));
+//console.log(randomIntBetween(1, 10));
 
 // methods on strings available.
-// Template Literals; Tagged Tamplates
+// Template Literals; Tagged Templates
 
 function productDescription(strings, productName, productPrice) {
   console.log(strings); // strings outputs an arrary of the string passed into the function.
@@ -24,14 +24,14 @@ function productDescription(strings, productName, productPrice) {
   if (productPrice > 20) {
     priceCategory = 'fairly priced';
   }
-  // return `${strings[0]}${productName}${strings[1]}${priceCategory}${ //modifying the string with tagged template
-  //   strings[2]
-  // }`;
+  return `${strings[0]}${productName}${strings[1]}${priceCategory}${ //modifying the string with tagged template
+    strings[2]
+  }`;
   return {name: productName, price: productPrice}; // not forced to return the string in a tagged template
 }
 
 const prodName = 'JavaScript Course';
-const prodPrice = 29.99;
+const prodPrice = 19.99;
 
 const productOutput = productDescription`This product (${prodName}) is ${prodPrice}.`;// Template literal right after function name``
 console.log(productOutput);
@@ -43,6 +43,6 @@ const regex = /hello/ //checking if hallo is part in there
 const regex2 = /(h|H)ello/ // checking for upper or lover case H and ello
 const regex3 = /.ello/ // wildcard first character
 const emailRegex = /^\S+@\S+\./ //email verification
-
+// emailRegex.test(userInput) boolean return
 // regex usually researched not learned 
 
